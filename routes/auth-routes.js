@@ -17,7 +17,6 @@ const registerValidation = [
   check("fullName", "The full name is required").not().isEmpty(),
   check("email", "The email is required").not().isEmpty(),
   check("email", "The email is not in the correct format").isEmail(),
-  check("password", "The password is required").not().isEmpty,
   check("password", "The password must be at least 6 chars").isLength({
     min: 6,
   }),
