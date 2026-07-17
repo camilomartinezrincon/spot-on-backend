@@ -1,6 +1,7 @@
 const { response } = require("express");
 const bcrypt = require("bcryptjs");
 const User = require("../models/UserModel");
+const { genJWT } = require("../helpers/jwt");
 
 const createClientUser = async (req, res = response) => {
   const { email, password } = req.body;
@@ -21,9 +22,12 @@ const createClientUser = async (req, res = response) => {
 
     await usr.save();
 
+    const token = await genJWT(usr.id, usr.fullName);
+
     res.status(201).json({
       ok: true,
       uid: usr.id,
+      token,
       msg: "register-client",
     });
   } catch (error) {
@@ -46,9 +50,12 @@ const createEmployeeUser = async (req, res = response) => {
 
     await usr.save();
 
+    const token = await genJWT(usr.id, usr.fullName);
+
     res.status(201).json({
       ok: true,
       uid: usr.id,
+      token,
       msg: "register-employee",
     });
   } catch (error) {
@@ -71,9 +78,12 @@ const createAdminUser = async (req, res = response) => {
 
     await usr.save();
 
+    const token = await genJWT(usr.id, usr.fullName);
+
     res.status(201).json({
       ok: true,
       uid: usr.id,
+      token,
       msg: "register-admin",
     });
   } catch (error) {
@@ -90,8 +100,6 @@ const loginUser = async (req, res = response) => {
 
   try {
     const usr = await User.findOne({ email });
-    const validPass = bcrypt.compareSync(password, usr.password);
-
     if (!usr) {
       return res.status(400).json({
         ok: false,
@@ -99,6 +107,7 @@ const loginUser = async (req, res = response) => {
       });
     }
 
+    const validPass = bcrypt.compareSync(password, usr.password);
     if (!validPass) {
       return res.status(400).json({
         ok: false,
@@ -106,11 +115,12 @@ const loginUser = async (req, res = response) => {
       });
     }
 
-    //ToDo: Generate JWT
+    const token = await genJWT(usr.id, usr.fullName);
 
     res.json({
       ok: true,
       uid: usr.id,
+      token,
       msg: "login",
     });
   } catch (error) {
@@ -122,10 +132,15 @@ const loginUser = async (req, res = response) => {
   }
 };
 
-const renewToken = (req, res = response) => {
+const renewToken = async (req, res = response) => {
+  const { uid, fullName } = req;
+
+  const token = await genJWT(uid, fullName);
+
   res.json({
     ok: true,
-    msg: "renew",
+    token,
+    msg: "renew-token",
   });
 };
 
