@@ -10,6 +10,7 @@ dbConnection();
 
 //CORS
 app.use(cors());
+
 // public dir
 app.use(express.static("public"));
 
@@ -17,7 +18,7 @@ app.use(express.json());
 
 // Routes
 app.use("/api/auth", require("./routes/auth-routes"));
-//TODO: CRUD
+app.use("/api/events", require("./routes/calendar-events-routes"));
 
 app.listen(process.env.PORT, () => {
   console.log(`Server running on port ${process.env.PORT}`);
