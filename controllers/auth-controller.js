@@ -3,6 +3,22 @@ const bcrypt = require("bcryptjs");
 const User = require("../models/UserModel");
 const { genJWT } = require("../helpers/jwt");
 
+const getUsers = async (req, res = response) => {
+  if (req.role !== "ADMIN") {
+    return res.status(401).json({
+      ok: false,
+      msg: "You are not allowed to view the users list",
+    });
+  }
+
+  const user = await User.find();
+  return res.json({
+    ok: true,
+    usr: user,
+    msg: "get-users",
+  });
+};
+
 const createClientUser = async (req, res = response) => {
   const { email, password } = req.body;
   try {
@@ -144,10 +160,125 @@ const renewToken = async (req, res = response) => {
   });
 };
 
+const updateUser = async (req, res = response) => {
+  const userId = req.params.id;
+
+  try {
+    const usr = await User.findById(userId);
+    if (!usr) {
+      return res.status(404).json({
+        ok: false,
+        msg: "The user doesn't exists",
+      });
+    }
+
+    if (req.role !== "ADMIN") {
+      return res.status(401).json({
+        ok: false,
+        msg: "You are not allowed to update an user",
+      });
+    }
+    const newUser = { ...req.body };
+    delete newUser.password;
+
+    const updatedUser = await User.findByIdAndUpdate(userId, newUser, {
+      returnDocument: "after",
+    });
+
+    res.json({
+      ok: true,
+      userId: updatedUser,
+      msg: "update-user",
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({
+      ok: false,
+      msg: "Error updating the user",
+    });
+  }
+};
+
+const updateUserPassword = async (req, res = response) => {
+  const userId = req.params.id;
+  const { password } = req.body;
+
+  try {
+    const usr = await User.findById(userId);
+
+    if (!usr) {
+      return res.status(404).json({
+        ok: false,
+        msg: "The user doesn't exists",
+      });
+    }
+
+    if (req.role !== "ADMIN") {
+      return res.status(401).json({
+        ok: false,
+        msg: "You are not allowed to update an user password",
+      });
+    }
+    const salt = bcrypt.genSaltSync();
+    usr.password = bcrypt.hashSync(password, salt);
+
+    await usr.save();
+
+    res.json({
+      ok: true,
+      msg: "update-user-password",
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({
+      ok: false,
+      msg: "Error updating the user password",
+    });
+  }
+};
+
+const deleteUser = async (req, res = response) => {
+  const userId = req.params.id;
+
+  try {
+    const usr = await User.findById(userId);
+    if (!usr) {
+      return res.status(404).json({
+        ok: false,
+        msg: "The user doesn't exists",
+      });
+    }
+
+    if (req.role !== "ADMIN") {
+      return res.status(401).json({
+        ok: false,
+        msg: "You are not allowed to delete an user",
+      });
+    }
+
+    await User.findByIdAndDelete(userId);
+
+    res.json({
+      ok: true,
+      msg: "delete-user",
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({
+      ok: false,
+      msg: "Error deleting the user",
+    });
+  }
+};
+
 module.exports = {
+  getUsers,
   createClientUser,
   createEmployeeUser,
   createAdminUser,
   loginUser,
   renewToken,
+  updateUser,
+  updateUserPassword,
+  deleteUser,
 };

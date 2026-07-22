@@ -37,8 +37,6 @@ const updateReservation = async (req, res = response) => {
   const reservationId = req.params.id;
   const uid = req.uid;
 
-  console.log("Role: " + req.role);
-
   try {
     const reservation = await Reservation.findById(reservationId);
 
@@ -57,6 +55,7 @@ const updateReservation = async (req, res = response) => {
     }
 
     const newReservation = { ...req.body };
+    // prevent to change the user id in the reservation
     delete newReservation.user;
 
     const updatedReservation = await Reservation.findByIdAndUpdate(
@@ -79,11 +78,40 @@ const updateReservation = async (req, res = response) => {
   }
 };
 
-const deleteReservation = (req, res = response) => {
-  res.json({
-    ok: true,
-    msg: "delete-reservation",
-  });
+const deleteReservation = async (req, res = response) => {
+  const reservationId = req.params.id;
+  const uid = req.uid;
+
+  try {
+    const reservation = await Reservation.findById(reservationId);
+
+    if (!reservation) {
+      return res.status(404).json({
+        ok: false,
+        msg: "The event doesn't exists",
+      });
+    }
+
+    if (req.role !== "EMPLOYEE" && reservation.user.toString() !== uid) {
+      return res.status(401).json({
+        ok: false,
+        msg: "You are not allowed to delete this reservation",
+      });
+    }
+
+    await Reservation.findByIdAndDelete(reservationId);
+
+    res.json({
+      ok: true,
+      msg: "delete-reservation",
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({
+      ok: false,
+      msg: "Error deleting a reservation",
+    });
+  }
 };
 
 module.exports = {
