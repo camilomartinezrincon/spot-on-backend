@@ -2,7 +2,10 @@ const { response } = require("express");
 const Reservation = require("../models/EventModel");
 
 const getReservations = async (req, res = response) => {
-  const reservation = await Reservation.find().populate("user", "email role");
+  const reservation = await Reservation.find().populate(
+    "user",
+    "fullName email role",
+  );
   res.json({
     ok: true,
     event: reservation,
@@ -34,30 +37,39 @@ const updateReservation = async (req, res = response) => {
   const reservationId = req.params.id;
   const uid = req.uid;
 
+  console.log("Role: " + req.role);
+
   try {
-    const reservation =
-      await Reservation.findById(reservationId).populate("user");
-    const newReservation = {
-      ...req.body,
-      user: uid,
-    };
+    const reservation = await Reservation.findById(reservationId);
 
     if (!reservation) {
-      res.status(404).json({
+      return res.status(404).json({
         ok: false,
         msg: "The event doesn't exists",
       });
     }
 
-    if (
-      reservation.user.role !== "EMPLOYEE" &&
-      reservation.user.toString() !== uid
-    ) {
+    if (req.role !== "EMPLOYEE" && reservation.user.toString() !== uid) {
       return res.status(401).json({
         ok: false,
         msg: "You are not allowed to update this reservation",
       });
     }
+
+    const newReservation = { ...req.body };
+    delete newReservation.user;
+
+    const updatedReservation = await Reservation.findByIdAndUpdate(
+      reservationId,
+      newReservation,
+      { returnDocument: "after" },
+    );
+
+    res.json({
+      ok: true,
+      reservation: updatedReservation,
+      msg: "update-reservation",
+    });
   } catch (error) {
     console.log(error);
     res.status(500).json({

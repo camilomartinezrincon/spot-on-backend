@@ -22,7 +22,7 @@ const createClientUser = async (req, res = response) => {
 
     await usr.save();
 
-    const token = await genJWT(usr.id, usr.fullName);
+    const token = await genJWT(usr.id, usr.fullName, usr.role);
 
     res.status(201).json({
       ok: true,
@@ -50,7 +50,7 @@ const createEmployeeUser = async (req, res = response) => {
 
     await usr.save();
 
-    const token = await genJWT(usr.id, usr.fullName);
+    const token = await genJWT(usr.id, usr.fullName, usr.role);
 
     res.status(201).json({
       ok: true,
@@ -78,7 +78,7 @@ const createAdminUser = async (req, res = response) => {
 
     await usr.save();
 
-    const token = await genJWT(usr.id, usr.fullName);
+    const token = await genJWT(usr.id, usr.fullName, usr.role);
 
     res.status(201).json({
       ok: true,
@@ -115,7 +115,7 @@ const loginUser = async (req, res = response) => {
       });
     }
 
-    const token = await genJWT(usr.id, usr.fullName);
+    const token = await genJWT(usr.id, usr.fullName, usr.role);
 
     res.json({
       ok: true,
@@ -133,9 +133,9 @@ const loginUser = async (req, res = response) => {
 };
 
 const renewToken = async (req, res = response) => {
-  const { uid, fullName } = req;
+  const { uid, fullNamem, role } = req;
 
-  const token = await genJWT(uid, fullName);
+  const token = await genJWT(uid, fullName, role);
 
   res.json({
     ok: true,
