@@ -20,6 +20,8 @@ app.use(express.json());
 app.use("/api/auth", require("./routes/auth-routes"));
 app.use("/api/events", require("./routes/calendar-events-routes"));
 
-app.listen(process.env.PORT, () => {
+const PORT = process.env.PORT || 8080;
+
+app.listen(PORT, "0.0.0.0", () => {
   console.log(`Server running on port ${process.env.PORT}`);
 });
