@@ -8,6 +8,10 @@ const {
   renewToken,
   createEmployeeUser,
   createAdminUser,
+  getUsers,
+  updateUser,
+  updateUserPassword,
+  deleteUser,
 } = require("../controllers/auth-controller");
 
 const registerValidation = [
@@ -22,6 +26,7 @@ const registerValidation = [
 
 const router = Router();
 
+router.get("/users", validateJWT, getUsers);
 router.post("/new/client", registerValidation, createClientUser);
 router.post("/new/employee", registerValidation, createEmployeeUser);
 router.post("/new/admin", registerValidation, createAdminUser);
@@ -37,6 +42,19 @@ router.post(
   ],
   loginUser,
 );
+router.put("/update/user/:id", validateJWT, updateUser);
+router.put(
+  "/update/user/password/:id",
+  validateJWT,
+  [
+    check("password", "The password must be at least 6 chars").isLength({
+      min: 6,
+    }),
+    fieldValidator,
+  ],
+  updateUserPassword,
+);
+router.delete("/delete/user/:id", validateJWT, deleteUser);
 router.get("/renew", validateJWT, renewToken);
 
 module.exports = router;
