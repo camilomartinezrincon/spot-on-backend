@@ -6,6 +6,11 @@ const EventSchema = Schema({
     ref: "User",
     required: true,
   },
+  restaurant: {
+    type: Schema.Types.ObjectId,
+    ref: "Restaurant",
+    required: true,
+  },
   customerName: {
     type: String,
     required: true,

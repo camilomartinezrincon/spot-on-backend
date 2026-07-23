@@ -19,6 +19,13 @@ const UserSchema = Schema({
     required: true,
     enum: ["CLIENT", "EMPLOYEE", "ADMIN"],
   },
+  restaurant: {
+    type: Schema.Types.ObjectId,
+    ref: "Restaurant",
+    required: function () {
+      return this.role === "EMPLOYEE";
+    },
+  },
   dateEnrollment: {
     type: Date,
     default: Date.now,
