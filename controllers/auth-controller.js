@@ -40,7 +40,7 @@ const createClientUser = async (req, res = response) => {
 
     const token = await genJWT(usr.id, usr.fullName, usr.role);
 
-    res.status(201).json({
+    return res.status(201).json({
       ok: true,
       uid: usr.id,
       token,
@@ -48,7 +48,7 @@ const createClientUser = async (req, res = response) => {
     });
   } catch (error) {
     console.log(error);
-    res.status(500).json({
+    return res.status(500).json({
       ok: false,
       msg: "Please contact support",
     });
@@ -68,7 +68,7 @@ const createEmployeeUser = async (req, res = response) => {
 
     const token = await genJWT(usr.id, usr.fullName, usr.role);
 
-    res.status(201).json({
+    return res.status(201).json({
       ok: true,
       uid: usr.id,
       token,
@@ -76,7 +76,7 @@ const createEmployeeUser = async (req, res = response) => {
     });
   } catch (error) {
     console.log(error);
-    res.status(500).json({
+    return res.status(500).json({
       ok: false,
       msg: error,
     });
@@ -96,7 +96,7 @@ const createAdminUser = async (req, res = response) => {
 
     const token = await genJWT(usr.id, usr.fullName, usr.role);
 
-    res.status(201).json({
+    return res.status(201).json({
       ok: true,
       uid: usr.id,
       token,
@@ -104,7 +104,7 @@ const createAdminUser = async (req, res = response) => {
     });
   } catch (error) {
     console.log(error);
-    res.status(500).json({
+    return res.status(500).json({
       ok: false,
       msg: error,
     });
@@ -133,7 +133,7 @@ const loginUser = async (req, res = response) => {
 
     const token = await genJWT(usr.id, usr.fullName, usr.role);
 
-    res.json({
+    return res.json({
       ok: true,
       uid: usr.id,
       token,
@@ -141,7 +141,7 @@ const loginUser = async (req, res = response) => {
     });
   } catch (error) {
     console.log(error);
-    res.status(500).json({
+    return res.status(500).json({
       ok: false,
       msg: "Please contact support",
     });
@@ -153,7 +153,7 @@ const renewToken = async (req, res = response) => {
 
   const token = await genJWT(uid, fullName, role);
 
-  res.json({
+  return res.json({
     ok: true,
     token,
     msg: "renew-token",
@@ -185,14 +185,14 @@ const updateUser = async (req, res = response) => {
       returnDocument: "after",
     });
 
-    res.json({
+    return res.json({
       ok: true,
       userId: updatedUser,
       msg: "update-user",
     });
   } catch (error) {
     console.log(error);
-    res.status(500).json({
+    return res.status(500).json({
       ok: false,
       msg: "Error updating the user",
     });
@@ -224,13 +224,13 @@ const updateUserPassword = async (req, res = response) => {
 
     await usr.save();
 
-    res.json({
+    return res.json({
       ok: true,
       msg: "update-user-password",
     });
   } catch (error) {
     console.log(error);
-    res.status(500).json({
+    return res.status(500).json({
       ok: false,
       msg: "Error updating the user password",
     });
@@ -258,13 +258,13 @@ const deleteUser = async (req, res = response) => {
 
     await User.findByIdAndDelete(userId);
 
-    res.json({
+    return res.json({
       ok: true,
       msg: "delete-user",
     });
   } catch (error) {
     console.log(error);
-    res.status(500).json({
+    return res.status(500).json({
       ok: false,
       msg: "Error deleting the user",
     });

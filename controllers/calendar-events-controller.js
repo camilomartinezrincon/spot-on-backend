@@ -10,14 +10,14 @@ const getReservations = async (req, res = response) => {
       "user",
       "fullName email role",
     );
-    res.json({
+    return res.json({
       ok: true,
       event: reservation,
       msg: "get-reservations",
     });
   } catch (error) {
     console.log(error);
-    res.status(500).json({
+    return res.status(500).json({
       ok: false,
       msg: "Error getting the reservations",
     });
@@ -30,14 +30,14 @@ const createReservation = async (req, res = response) => {
     reservation.user = req.uid;
     const newReservation = await reservation.save();
 
-    res.status(200).json({
+    return res.status(200).json({
       ok: true,
       event: newReservation,
       msg: "new-reservation",
     });
   } catch (error) {
     console.log(error);
-    res.status(500).json({
+    return res.status(500).json({
       ok: false,
       msg: "Failing creating a reservation",
     });
@@ -75,14 +75,14 @@ const updateReservation = async (req, res = response) => {
       { returnDocument: "after" },
     );
 
-    res.json({
+    return res.json({
       ok: true,
       reservation: updatedReservation,
       msg: "update-reservation",
     });
   } catch (error) {
     console.log(error);
-    res.status(500).json({
+    return res.status(500).json({
       ok: false,
       msg: "Error updating a reservation",
     });
@@ -112,13 +112,13 @@ const deleteReservation = async (req, res = response) => {
 
     await Reservation.findByIdAndDelete(reservationId);
 
-    res.json({
+    return res.json({
       ok: true,
       msg: "delete-reservation",
     });
   } catch (error) {
     console.log(error);
-    res.status(500).json({
+    return res.status(500).json({
       ok: false,
       msg: "Error deleting a reservation",
     });
