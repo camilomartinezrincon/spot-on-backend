@@ -149,7 +149,7 @@ const loginUser = async (req, res = response) => {
 };
 
 const renewToken = async (req, res = response) => {
-  const { uid, fullNamem, role } = req;
+  const { uid, fullName, role } = req;
 
   const token = await genJWT(uid, fullName, role);
 
