@@ -4,12 +4,21 @@ const Reservation = require("../models/EventModel");
 const getReservations = async (req, res = response) => {
   const uid = req.uid;
   try {
-    const filter =
-      req.role === "EMPLOYEE" || req.role === "ADMIN" ? {} : { user: uid };
-    const reservation = await Reservation.find(filter).populate(
-      "user",
-      "fullName email role",
-    );
+    let filter;
+    if (req.role === "ADMIN") {
+      filter = {};
+    } else if (req.role === "EMPLOYEE") {
+      filter = { restaurant: req.restaurant };
+    } else {
+      filter = { user: uid };
+    }
+
+    const reservation = await Reservation.find(filter)
+      .populate("user", "fullName email role")
+      .populate(
+        "restaurant",
+        "restaurantName restaurantAddress restaurantPhoneNum",
+      );
     return res.json({
       ok: true,
       event: reservation,
@@ -50,6 +59,10 @@ const updateReservation = async (req, res = response) => {
 
   try {
     const reservation = await Reservation.findById(reservationId);
+    const isOwnerReservation = reservation.user.toString() === uid;
+    const isRestaurantEmployee =
+      req.role === "EMPLOYEE" &&
+      reservation.restaurant.toString() === req.restaurant;
 
     if (!reservation) {
       return res.status(404).json({
@@ -58,7 +71,7 @@ const updateReservation = async (req, res = response) => {
       });
     }
 
-    if (req.role !== "EMPLOYEE" && reservation.user.toString() !== uid) {
+    if (!isOwnerReservation && !isRestaurantEmployee) {
       return res.status(401).json({
         ok: false,
         msg: "You are not allowed to update this reservation",
@@ -95,6 +108,10 @@ const deleteReservation = async (req, res = response) => {
 
   try {
     const reservation = await Reservation.findById(reservationId);
+    const isOwnerReservation = reservation.user.toString() === uid;
+    const isRestaurantEmployee =
+      req.role === "EMPLOYEE" &&
+      reservation.restaurant.toString() === req.restaurant;
 
     if (!reservation) {
       return res.status(404).json({
@@ -103,7 +120,7 @@ const deleteReservation = async (req, res = response) => {
       });
     }
 
-    if (req.role !== "EMPLOYEE" && reservation.user.toString() !== uid) {
+    if (!isOwnerReservation && !isRestaurantEmployee) {
       return res.status(401).json({
         ok: false,
         msg: "You are not allowed to delete this reservation",

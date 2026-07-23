@@ -66,7 +66,7 @@ const createEmployeeUser = async (req, res = response) => {
 
     await usr.save();
 
-    const token = await genJWT(usr.id, usr.fullName, usr.role);
+    const token = await genJWT(usr.id, usr.fullName, usr.role, usr.restaurant);
 
     return res.status(201).json({
       ok: true,
@@ -78,7 +78,7 @@ const createEmployeeUser = async (req, res = response) => {
     console.log(error);
     return res.status(500).json({
       ok: false,
-      msg: error,
+      msg: "Please contact support",
     });
   }
 };
@@ -131,7 +131,7 @@ const loginUser = async (req, res = response) => {
       });
     }
 
-    const token = await genJWT(usr.id, usr.fullName, usr.role);
+    const token = await genJWT(usr.id, usr.fullName, usr.role, usr.restaurant);
 
     return res.json({
       ok: true,
@@ -149,9 +149,9 @@ const loginUser = async (req, res = response) => {
 };
 
 const renewToken = async (req, res = response) => {
-  const { uid, fullName, role } = req;
+  const { uid, fullName, role, restaurant } = req;
 
-  const token = await genJWT(uid, fullName, role);
+  const token = await genJWT(uid, fullName, role, restaurant);
 
   return res.json({
     ok: true,
