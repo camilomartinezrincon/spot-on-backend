@@ -2,15 +2,26 @@ const { response } = require("express");
 const Reservation = require("../models/EventModel");
 
 const getReservations = async (req, res = response) => {
-  const reservation = await Reservation.find().populate(
-    "user",
-    "fullName email role",
-  );
-  res.json({
-    ok: true,
-    event: reservation,
-    msg: "get-reservations",
-  });
+  const uid = req.uid;
+  try {
+    const filter =
+      req.role === "EMPLOYEE" || req.role === "ADMIN" ? {} : { user: uid };
+    const reservation = await Reservation.find(filter).populate(
+      "user",
+      "fullName email role",
+    );
+    res.json({
+      ok: true,
+      event: reservation,
+      msg: "get-reservations",
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({
+      ok: false,
+      msg: "Error getting the reservations",
+    });
+  }
 };
 
 const createReservation = async (req, res = response) => {
