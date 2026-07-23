@@ -13,35 +13,18 @@ const {
   updateUserPassword,
   deleteUser,
 } = require("../controllers/auth-controller");
-
-const registerValidation = [
-  check("fullName", "The full name is required").not().isEmpty(),
-  check("email", "The email is required").not().isEmpty(),
-  check("email", "The email is not in the correct format").isEmail(),
-  check("password", "The password must be at least 6 chars").isLength({
-    min: 6,
-  }),
-  fieldValidator,
-];
+const {
+  registerUserValidations,
+  loginUserValidations,
+} = require("../helpers/validations");
 
 const router = Router();
 
 router.get("/users", validateJWT, getUsers);
-router.post("/new/client", registerValidation, createClientUser);
-router.post("/new/employee", registerValidation, createEmployeeUser);
-router.post("/new/admin", registerValidation, createAdminUser);
-router.post(
-  "/login",
-  [
-    check("email", "The email is required").not().isEmpty(),
-    check("email", "The email is not in the correct format").isEmail(),
-    check("password", "The password must be at least 6 chars").isLength({
-      min: 6,
-    }),
-    fieldValidator,
-  ],
-  loginUser,
-);
+router.post("/new/client", registerUserValidations, createClientUser);
+router.post("/new/employee", registerUserValidations, createEmployeeUser);
+router.post("/new/admin", registerUserValidations, createAdminUser);
+router.post("/login", loginUserValidations, loginUser);
 router.put("/update/user/:id", validateJWT, updateUser);
 router.put(
   "/update/user/password/:id",

@@ -20,6 +20,7 @@ app.use(express.json());
 // Routes
 app.use("/api/auth", require("./routes/auth-routes"));
 app.use("/api/events", require("./routes/calendar-events-routes"));
+app.use("/api/restaurants", require("./routes/restaurant-routes"));
 
 //Digital Ocean health check
 app.get("/api/health", (req, res) => {
