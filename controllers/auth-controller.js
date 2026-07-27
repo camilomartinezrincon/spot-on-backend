@@ -136,6 +136,7 @@ const loginUser = async (req, res = response) => {
     return res.json({
       ok: true,
       uid: usr.id,
+      fullName: usr.fullName,
       token,
       msg: "login",
     });
@@ -155,6 +156,8 @@ const renewToken = async (req, res = response) => {
 
   return res.json({
     ok: true,
+    uid,
+    fullName,
     token,
     msg: "renew-token",
   });
