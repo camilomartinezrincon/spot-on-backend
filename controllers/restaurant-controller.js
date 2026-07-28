@@ -6,7 +6,7 @@ const getRestaurants = async (req, res = response) => {
     const restaurant = await Restaurant.find();
     return res.json({
       ok: true,
-      event: restaurant,
+      restaurant: restaurant,
       msg: "get-restaurants",
     });
   } catch (error) {
