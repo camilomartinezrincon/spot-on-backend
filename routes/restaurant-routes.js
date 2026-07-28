@@ -12,9 +12,9 @@ const router = Router();
 
 router.use(validateJWT);
 
-router.get("/restautants", getRestaurants);
-router.post("/new/restautant", restaurantValidations, createRestaurant);
-router.put("/update/restautant/:id", updateRestaurant);
-router.delete("/delete/restautant/:id", deleteRestaurant);
+router.get("/restaurants", getRestaurants);
+router.post("/new/restaurant", restaurantValidations, createRestaurant);
+router.put("/update/restaurant/:id", updateRestaurant);
+router.delete("/delete/restaurant/:id", deleteRestaurant);
 
 module.exports = router;
