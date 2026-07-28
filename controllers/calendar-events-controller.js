@@ -13,7 +13,7 @@ const getReservations = async (req, res = response) => {
       filter = { user: uid };
     }
 
-    const reservation = await Reservation.find(filter)
+    const allReservations = await Reservation.find(filter)
       .populate("user", "fullName email role")
       .populate(
         "restaurant",
@@ -21,7 +21,7 @@ const getReservations = async (req, res = response) => {
       );
     return res.json({
       ok: true,
-      event: reservation,
+      reservation: allReservations,
       msg: "get-reservations",
     });
   } catch (error) {
@@ -41,7 +41,7 @@ const createReservation = async (req, res = response) => {
 
     return res.status(200).json({
       ok: true,
-      event: newReservation,
+      reservation: newReservation,
       msg: "new-reservation",
     });
   } catch (error) {
