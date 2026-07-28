@@ -6,6 +6,7 @@ const {
   createRestaurant,
   updateRestaurant,
   deleteRestaurant,
+  getRestaurant,
 } = require("../controllers/restaurant-controller");
 
 const router = Router();
