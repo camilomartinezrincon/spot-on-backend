@@ -3,13 +3,6 @@ const Restaurant = require("../models/RestaurantModel");
 
 const getRestaurants = async (req, res = response) => {
   try {
-    if (req.role !== "ADMIN") {
-      return res.status(401).json({
-        ok: false,
-        msg: "You are not allowed to see the restaurants",
-      });
-    }
-
     const restaurant = await Restaurant.find();
     return res.json({
       ok: true,
