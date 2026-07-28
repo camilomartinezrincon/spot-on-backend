@@ -137,6 +137,8 @@ const loginUser = async (req, res = response) => {
       ok: true,
       uid: usr.id,
       fullName: usr.fullName,
+      role: usr.role,
+      restaurant: usr.restaurant,
       token,
       msg: "login",
     });
@@ -158,6 +160,8 @@ const renewToken = async (req, res = response) => {
     ok: true,
     uid,
     fullName,
+    role,
+    restaurant,
     token,
     msg: "renew-token",
   });
