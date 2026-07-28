@@ -13,6 +13,7 @@ const router = Router();
 router.use(validateJWT);
 
 router.get("/restaurants", getRestaurants);
+router.get("/restaurant/:id", getRestaurant);
 router.post("/new/restaurant", restaurantValidations, createRestaurant);
 router.put("/update/restaurant/:id", updateRestaurant);
 router.delete("/delete/restaurant/:id", deleteRestaurant);

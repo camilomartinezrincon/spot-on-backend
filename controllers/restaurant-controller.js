@@ -18,6 +18,30 @@ const getRestaurants = async (req, res = response) => {
   }
 };
 
+const getRestaurant = async (req, res = response) => {
+  const restaurantId = req.params.id;
+  try {
+    const restaurant = await Restaurant.findById(restaurantId);
+    if (!restaurant) {
+      return res.status(404).json({
+        ok: false,
+        msg: "The restaurant doesn't exists",
+      });
+    }
+    return res.json({
+      ok: true,
+      restaurant,
+      msg: "get-restaurant",
+    });
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({
+      ok: false,
+      msg: "Error getting the restaurant",
+    });
+  }
+};
+
 const createRestaurant = async (req, res = response) => {
   const restaurant = new Restaurant(req.body);
   try {
@@ -114,6 +138,7 @@ const deleteRestaurant = async (req, res = response) => {
 };
 module.exports = {
   getRestaurants,
+  getRestaurant,
   createRestaurant,
   updateRestaurant,
   deleteRestaurant,
