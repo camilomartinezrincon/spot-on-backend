@@ -19,6 +19,11 @@ const UserSchema = Schema({
     required: true,
     enum: ["CLIENT", "EMPLOYEE", "ADMIN"],
   },
+  status: {
+    type: String,
+    enum: ["ACTIVE", "INACTIVE"],
+    default: "ACTIVE",
+  },
   restaurant: {
     type: Schema.Types.ObjectId,
     ref: "Restaurant",
